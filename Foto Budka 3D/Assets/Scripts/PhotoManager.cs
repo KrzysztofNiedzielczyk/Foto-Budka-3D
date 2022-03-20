@@ -32,7 +32,7 @@ public class PhotoManager : MonoBehaviour
     public void LoadAssets()
     {
         //import assets from the folder and add them to the list
-        folderObjList = Resources.LoadAll<GameObject>("3D Objects").ToList();
+        folderObjList = Resources.LoadAll<GameObject>("Input").ToList();
 
         int i = 0;
 
