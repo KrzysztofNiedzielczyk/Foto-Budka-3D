@@ -5,11 +5,24 @@ using System.Linq;
 public class PhotoManager : MonoBehaviour
 {
     //list of imported assets
-    public List<GameObject> folderObjList = new List<GameObject>();
+    private List<GameObject> folderObjList = new List<GameObject>();
     //list of objects in the scene
-    public List<GameObject> scenbeObjList = new List<GameObject>();
+    private List<GameObject> scenbeObjList = new List<GameObject>();
 
+    //foler to witch objects will be parented
     public GameObject objFolder;
+
+    //currently active object
+    [SerializeField]
+    private Transform currentObj;
+
+    //rotation parameters
+    Vector3 prevPos = Vector3.zero;
+    Vector3 posDelta = Vector3.zero;
+    Quaternion originalRotation = Quaternion.identity;
+
+    //additional options
+    public bool returnOriginalRotation = true;
 
     private void Start()
     {
@@ -18,14 +31,13 @@ public class PhotoManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        //if mouse drag -> rotate current object
+        if (Input.GetMouseButton(0))
         {
-            NextAsset();
+            Rotate();
         }
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            PreviousAsset();
-        }
+        //current mouse position
+        prevPos = Input.mousePosition;
     }
 
     //loading up assets on the start
@@ -47,6 +59,7 @@ public class PhotoManager : MonoBehaviour
             if (i == 0)
             {
                 spawnedAsset.SetActive(true);
+                currentObj = spawnedAsset.transform;
             }
             i++;
 
@@ -65,7 +78,17 @@ public class PhotoManager : MonoBehaviour
             if (obj.activeInHierarchy == true && i != scenbeObjList.Count-1)
             {
                 obj.SetActive(false);
-                scenbeObjList[i + 1].SetActive(true);
+
+                GameObject nextObj = scenbeObjList[i + 1];
+
+                nextObj.SetActive(true);
+                currentObj = nextObj.transform;
+
+                //return to original rotation
+                if (returnOriginalRotation)
+                {
+                    currentObj.rotation = originalRotation;
+                }
                 break;
             }
 
@@ -73,7 +96,17 @@ public class PhotoManager : MonoBehaviour
             if (i == scenbeObjList.Count - 1)
             {
                 obj.SetActive(false);
-                scenbeObjList[0].SetActive(true);
+
+                GameObject nextObj = scenbeObjList[0];
+
+                nextObj.SetActive(true);
+                currentObj = nextObj.transform;
+
+                //return to original rotation
+                if (returnOriginalRotation)
+                {
+                    currentObj.rotation = originalRotation;
+                }
                 break;
             }
             i++;
@@ -90,7 +123,17 @@ public class PhotoManager : MonoBehaviour
             {
                 int i = scenbeObjList.IndexOf(obj);
                 obj.SetActive(false);
-                scenbeObjList[i - 1].SetActive(true);
+
+                GameObject previousObj = scenbeObjList[i - 1];
+
+                previousObj.SetActive(true);
+                currentObj = previousObj.transform;
+
+                //return to original rotation
+                if (returnOriginalRotation)
+                {
+                    currentObj.rotation = originalRotation;
+                }
                 break;
             }
 
@@ -98,9 +141,36 @@ public class PhotoManager : MonoBehaviour
             if (obj.activeInHierarchy == true && scenbeObjList.IndexOf(obj) == 0)
             {
                 obj.SetActive(false);
-                scenbeObjList[scenbeObjList.Count-1].SetActive(true);
+
+                GameObject previousObj = scenbeObjList[scenbeObjList.Count - 1];
+
+                previousObj.SetActive(true);
+                currentObj = previousObj.transform;
+
+                //return to original rotation
+                if (returnOriginalRotation)
+                {
+                    currentObj.rotation = originalRotation;
+                }
                 break;
             }
         }
+    }
+
+    private void Rotate()
+    {
+        posDelta = Input.mousePosition - prevPos;
+
+        //check if object is upside down and rotate it
+        if (Vector3.Dot(currentObj.transform.up, Vector3.up) >= 0)
+        {
+            currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
+        }
+        else
+        {
+            currentObj.Rotate(transform.up, Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
+        }
+
+        currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
     }
 }
