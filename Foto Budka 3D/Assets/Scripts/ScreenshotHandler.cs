@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ScreenshotHandler : MonoBehaviour
 {
+    //helper script that render camera scren textures and saves it to file
+
     private static ScreenshotHandler instance;
 
     public Camera screenshotCamera;
@@ -54,9 +56,6 @@ public class ScreenshotHandler : MonoBehaviour
                 System.IO.File.WriteAllBytes("Assets/Resources/Output/Screenshot " + timeNow + ".jpg", byteArrayJPG);
                 Debug.Log("Saved CameraScreenshot.jpg");
             }
-
-            /*RenderTexture.ReleaseTemporary(renderTexture);
-            screenshotCamera = null;*/
         }
     }
 

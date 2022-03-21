@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Linq;
 
 public class PhotoManager : MonoBehaviour
@@ -31,8 +32,8 @@ public class PhotoManager : MonoBehaviour
 
     private void Update()
     {
-        //if mouse drag -> rotate current object
-        if (Input.GetMouseButton(0))
+        //if mouse clicked -> rotate current object
+        if (Input.GetMouseButton(0) && !IsMouseOverUI())
         {
             Rotate();
         }
@@ -161,7 +162,7 @@ public class PhotoManager : MonoBehaviour
     {
         posDelta = Input.mousePosition - prevPos;
 
-        //check if object is upside down and rotate it
+        //check if object is upside down and rotate it correctly
         if (Vector3.Dot(currentObj.transform.up, Vector3.up) >= 0)
         {
             currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
@@ -172,6 +173,11 @@ public class PhotoManager : MonoBehaviour
         }
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
+    }
+
+    private bool IsMouseOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     public void MakeScreenshot()
