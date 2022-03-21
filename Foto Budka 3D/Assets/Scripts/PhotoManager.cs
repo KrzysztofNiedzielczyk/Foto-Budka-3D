@@ -173,4 +173,9 @@ public class PhotoManager : MonoBehaviour
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
     }
+
+    public void MakeScreenshot()
+    {
+        ScreenshotHandler.TakeScreenshot_Static(Screen.width, Screen.height);
+    }
 }
