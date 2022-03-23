@@ -172,15 +172,7 @@ public class PhotoManager : MonoBehaviour
     {
         posDelta = Input.mousePosition - prevPos;
 
-        //check if object is upside down and rotate it correctly
-        if (Vector3.Dot(currentObj.transform.up, Vector3.up) >= 0)
-        {
-            currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
-        }
-        else
-        {
-            currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
-        }
+        currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
     }
