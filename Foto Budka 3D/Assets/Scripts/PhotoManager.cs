@@ -25,7 +25,7 @@ public class PhotoManager : MonoBehaviour
     //zoom
     private float minFov = 10f;
     private float maxFov = 130f;
-    private float sensitivity = 10f;
+    private float sensitivity = 20f;
 
     //additional options
     public bool returnOriginalRotation = true;
