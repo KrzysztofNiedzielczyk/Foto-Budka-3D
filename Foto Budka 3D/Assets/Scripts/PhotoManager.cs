@@ -31,8 +31,12 @@ public class PhotoManager : MonoBehaviour
     //additional options
     public bool returnOriginalRotation = true;
 
+    //ESC pause menu
+    public GameObject pauseMenu;
+
     private void Awake()
     {
+        //creates a local directory if it doesn't exist
         if(!Directory.Exists(Application.persistentDataPath + "/Output"))
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/Output");
@@ -41,13 +45,12 @@ public class PhotoManager : MonoBehaviour
 
     private void Start()
     {
+        //loading up assets from Input folder
         LoadAssets();
     }
 
     private void Update()
     {
-
-
         //if mouse clicked -> rotate current object
         if (Input.GetMouseButton(0) && !IsMouseOverUI())
         {
@@ -56,9 +59,16 @@ public class PhotoManager : MonoBehaviour
         //current mouse position
         prevPos = Input.mousePosition;
 
+        //mouse scrool wheel zoom
         if (Input.GetAxis("Mouse ScrollWheel") > 0 || Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             Zoom();
+        }
+
+        //opening pause menu
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
         }
     }
 
@@ -179,6 +189,7 @@ public class PhotoManager : MonoBehaviour
         }
     }
 
+    //object rotation with mouse drag
     private void RotateWorld()
     {
         posDelta = Input.mousePosition - prevPos;
@@ -188,21 +199,30 @@ public class PhotoManager : MonoBehaviour
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
     }
 
+    //checking if mouse is over UI element
     private bool IsMouseOverUI()
     {
         return EventSystem.current.IsPointerOverGameObject();
     }
 
+    //screenshot function calling for static from ScreenshotHandler script
     public void MakeScreenshot()
     {
         ScreenshotHandler.TakeScreenshot_Static(Screen.width, Screen.height);
     }
 
+    //zooming function
     private void Zoom()
     {
         float fov = Camera.main.fieldOfView;
         fov += -Input.GetAxis("Mouse ScrollWheel") * sensitivity;
         fov = Mathf.Clamp(fov, minFov, maxFov);
         Camera.main.fieldOfView = fov;
+    }
+
+    //pause menu to exit the application
+    public void Pause()
+    {
+        pauseMenu.SetActive(true);
     }
 }
