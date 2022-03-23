@@ -47,13 +47,13 @@ public class ScreenshotHandler : MonoBehaviour
             if (changeFormat)
             {
                 byte[] byteArrayPNG = renderResult.EncodeToPNG();
-                System.IO.File.WriteAllBytes("Assets/Resources/Output/Screenshot " + timeNow + ".png", byteArrayPNG);
+                System.IO.File.WriteAllBytes(Application.persistentDataPath + "/Output/Screenshot " + timeNow + ".png", byteArrayPNG);
                 Debug.Log("Saved CameraScreenshot.png");
             }
             else if (!changeFormat)
             {
                 byte[] byteArrayJPG = renderResult.EncodeToJPG();
-                System.IO.File.WriteAllBytes("Assets/Resources/Output/Screenshot " + timeNow + ".jpg", byteArrayJPG);
+                System.IO.File.WriteAllBytes(Application.persistentDataPath + "/Output/Screenshot " + timeNow + ".jpg", byteArrayJPG);
                 Debug.Log("Saved CameraScreenshot.jpg");
             }
 

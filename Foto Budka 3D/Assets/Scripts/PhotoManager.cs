@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System.IO;
 
 public class PhotoManager : MonoBehaviour
 {
@@ -22,6 +23,10 @@ public class PhotoManager : MonoBehaviour
     Vector3 posDelta = Vector3.zero;
     Quaternion originalRotation = Quaternion.identity;
 
+    public bool rotationY = true;
+    public bool rotationX = true;
+    public bool rotationZ = true;
+
     //zoom
     private float minFov = 10f;
     private float maxFov = 130f;
@@ -29,6 +34,14 @@ public class PhotoManager : MonoBehaviour
 
     //additional options
     public bool returnOriginalRotation = true;
+
+    private void Awake()
+    {
+        if(!Directory.Exists(Application.persistentDataPath + "/Output"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/Output");
+        }
+    }
 
     private void Start()
     {
@@ -40,7 +53,12 @@ public class PhotoManager : MonoBehaviour
         //if mouse clicked -> rotate current object
         if (Input.GetMouseButton(0) && !IsMouseOverUI())
         {
-            Rotate();
+            RotateWorld();
+        }
+        //if mouse clicked -> rotate current object
+        if (Input.GetMouseButton(1) && !IsMouseOverUI())
+        {
+            RotateSelf();
         }
         //current mouse position
         prevPos = Input.mousePosition;
@@ -168,13 +186,22 @@ public class PhotoManager : MonoBehaviour
         }
     }
 
-    private void Rotate()
+    private void RotateWorld()
     {
         posDelta = Input.mousePosition - prevPos;
 
         currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
+    }
+
+    private void RotateSelf()
+    {
+        posDelta = Input.mousePosition - prevPos;
+
+        currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.Self);
+
+        currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.Self);
     }
 
     private bool IsMouseOverUI()
