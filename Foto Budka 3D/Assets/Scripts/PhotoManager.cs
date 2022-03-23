@@ -23,10 +23,6 @@ public class PhotoManager : MonoBehaviour
     Vector3 posDelta = Vector3.zero;
     Quaternion originalRotation = Quaternion.identity;
 
-    public bool rotationY = true;
-    public bool rotationX = true;
-    public bool rotationZ = true;
-
     //zoom
     private float minFov = 10f;
     private float maxFov = 130f;
@@ -50,15 +46,12 @@ public class PhotoManager : MonoBehaviour
 
     private void Update()
     {
+
+
         //if mouse clicked -> rotate current object
         if (Input.GetMouseButton(0) && !IsMouseOverUI())
         {
             RotateWorld();
-        }
-        //if mouse clicked -> rotate current object
-        if (Input.GetMouseButton(1) && !IsMouseOverUI())
-        {
-            RotateSelf();
         }
         //current mouse position
         prevPos = Input.mousePosition;
@@ -193,15 +186,6 @@ public class PhotoManager : MonoBehaviour
         currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
-    }
-
-    private void RotateSelf()
-    {
-        posDelta = Input.mousePosition - prevPos;
-
-        currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.Self);
-
-        currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.Self);
     }
 
     private bool IsMouseOverUI()
