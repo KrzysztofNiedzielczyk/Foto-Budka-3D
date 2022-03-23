@@ -9,11 +9,11 @@ public class ScreenshotHandler : MonoBehaviour
 
     private static ScreenshotHandler instance;
 
-    public Camera screenshotCamera;
+    public Camera myCamera;
 
     private bool takeScreenshotOnNextFrame;
 
-    public bool changeFormat = true;
+    private bool changeFormat = true;
 
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class ScreenshotHandler : MonoBehaviour
         if (takeScreenshotOnNextFrame == true)
         {
             takeScreenshotOnNextFrame = false;
-            RenderTexture renderTexture = screenshotCamera.targetTexture;
+            RenderTexture renderTexture = myCamera.targetTexture;
 
             Texture2D renderResult = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.ARGB32, false);
             Rect rect = new Rect(0, 0, renderTexture.width, renderTexture.height);
@@ -56,12 +56,15 @@ public class ScreenshotHandler : MonoBehaviour
                 System.IO.File.WriteAllBytes("Assets/Resources/Output/Screenshot " + timeNow + ".jpg", byteArrayJPG);
                 Debug.Log("Saved CameraScreenshot.jpg");
             }
+
+            RenderTexture.ReleaseTemporary(renderTexture);
+            myCamera.targetTexture = null;
         }
     }
 
     private void TakeScreenshot(int width, int height)
     {
-        screenshotCamera.targetTexture = RenderTexture.GetTemporary(width, height, 16);
+        myCamera.targetTexture = RenderTexture.GetTemporary(width, height, 16);
         takeScreenshotOnNextFrame = true;
         StartCoroutine(OnRender());
     }

@@ -11,16 +11,21 @@ public class PhotoManager : MonoBehaviour
     private List<GameObject> scenbeObjList = new List<GameObject>();
 
     //foler to witch objects will be parented
-    public GameObject objFolder;
+    [SerializeField]
+    private GameObject objFolder;
 
     //currently active object
-    [SerializeField]
     private Transform currentObj;
 
     //rotation parameters
     Vector3 prevPos = Vector3.zero;
     Vector3 posDelta = Vector3.zero;
     Quaternion originalRotation = Quaternion.identity;
+
+    //zoom
+    private float minFov = 10f;
+    private float maxFov = 130f;
+    private float sensitivity = 10f;
 
     //additional options
     public bool returnOriginalRotation = true;
@@ -39,6 +44,11 @@ public class PhotoManager : MonoBehaviour
         }
         //current mouse position
         prevPos = Input.mousePosition;
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 || Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            Zoom();
+        }
     }
 
     //loading up assets on the start
@@ -169,7 +179,7 @@ public class PhotoManager : MonoBehaviour
         }
         else
         {
-            currentObj.Rotate(transform.up, Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
+            currentObj.Rotate(transform.up, -Vector3.Dot(posDelta, Camera.main.transform.right), Space.World);
         }
 
         currentObj.Rotate(Camera.main.transform.right, Vector3.Dot(posDelta, Camera.main.transform.up), Space.World);
@@ -183,5 +193,13 @@ public class PhotoManager : MonoBehaviour
     public void MakeScreenshot()
     {
         ScreenshotHandler.TakeScreenshot_Static(Screen.width, Screen.height);
+    }
+
+    private void Zoom()
+    {
+        float fov = Camera.main.fieldOfView;
+        fov += -Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+        fov = Mathf.Clamp(fov, minFov, maxFov);
+        Camera.main.fieldOfView = fov;
     }
 }
